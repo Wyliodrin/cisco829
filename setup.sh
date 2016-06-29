@@ -1,7 +1,5 @@
 #!/bin/sh
 
-echo -e "wyliodrin\nwyliodrin" | (passwd root)
-
 mkdir /opt
 
 /etc/init.d/sshd stop
