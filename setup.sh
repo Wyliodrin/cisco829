@@ -2,9 +2,6 @@
 
 mkdir /opt
 
-/etc/init.d/sshd stop
-/etc/init.d/sshd start
-
 cd node
 
 cp -a bin/. /usr/bin/
