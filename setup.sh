@@ -12,7 +12,7 @@ cp -a share/. /usr/share/
 cd ..
 
 mkdir /opt/wyliodrin
-cp wyl /opt/wyliodrin/wyl
+cp -r wyl /opt/wyliodrin/wyl
 
 ln -s /opt/wyliodrin /wyliodrin
 
