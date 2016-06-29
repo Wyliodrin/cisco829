@@ -24,6 +24,6 @@ cd /wyliodrin/wyl
 mkdir /etc/wyliodrin
 echo -n cisco829 > /etc/wyliodrin/boardtype
 cp setup/settings_cisco829.json /etc/wyliodrin
-#cp scripts/cisco829/S99wyliodrin-app-server /etc/rc5.d/
+#cp scripts/cisco829/S99wyliodrin-app-server /etc/rc3.d/
 
 node startup
