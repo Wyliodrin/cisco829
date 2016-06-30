@@ -1,0 +1,21 @@
+#!/bin/sh
+# Copy at startup and remove at shutdown
+#
+start() {
+redis-server --daemonize yes
+}
+stop() {
+redis-cli shutdown
+}
+case "$1" in
+start)
+start
+;;
+stop)
+stop
+;;
+
+*)
+echo $"Usage: $0 {start|stop}"
+RETVAL=1
+esac
