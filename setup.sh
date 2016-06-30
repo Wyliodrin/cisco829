@@ -10,6 +10,8 @@ cp -a lib/. /usr/lib/
 cp -a include/. /usr/include/
 cp -a share/. /usr/share/
 
+chmod +x /usr/bin/node
+
 cd ..
 #####end node
 
@@ -18,6 +20,8 @@ cd redis
 
 cp redis-cli /usr/bin/redis-cli
 cp redis-server /usr/bin/redis-server
+chmod +x /usr/bin/redis-cli
+chmod +x /usr/bin/redis-server
 
 cp redis /etc/init.d/redis
 chmod +x /etc/init.d/redis
