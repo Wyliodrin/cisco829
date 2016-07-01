@@ -64,7 +64,7 @@ rm -rf avahi
 
 
 #####start node-red
-cp -rp node-red/wyliodrin /wyliodrin/node-red
+cp -rp node-red /wyliodrin/node-red
 rm -rf node-red
 #####end node-red
 
@@ -98,6 +98,6 @@ ln -s ../init.d/wyliodrin-app-server /etc/rc5.d/S97wyliodrin-app-server
 
 
 /etc/init.d/redis start
-/etc/init.d/wyliodrin-app-server
+/etc/init.d/wyliodrin-app-server start
 
 
