@@ -1,0 +1,432 @@
+<script type="text/javascript">
+    RED.nodes.registerType('digitalwrite',{
+        category: 'IO Pins',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value:""},
+            pin: {
+                value: "0"
+            }
+        },
+        inputs:1,
+        outputs:0,
+        icon: "digital.png",
+        align: 'right',
+        label: function() {
+            return this.name||"Digital Write "+(this.pin.length>0?this.pin:"msg.topic");
+        }
+    });
+
+    RED.nodes.registerType('digitalread',{
+        category: 'IO Pins',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value:""},
+            pin: {
+                value: "0"
+            }
+        },
+        inputs:1,
+        outputs:1,
+        icon: "digital.png",
+        label: function() {
+            return this.name||"Digital Read "+(this.pin.length>0?this.pin:"msg.topic");
+        }
+    });
+
+    RED.nodes.registerType('shift out',{
+        category: 'IO Pins',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value:""},
+            pin: {
+                value: "0"
+            },
+            clock: {
+                value: "1"
+            },
+            msblsb: {
+                value: "0",
+                required: true
+            },
+            register: {
+                value: "none",
+                required: true
+            },
+            register_pin: {
+                value: "2",
+            }
+        },
+        inputs:1,
+        outputs:0,
+        icon: "serial.png",
+        align: 'right',
+        label: function() {
+            return this.name||"Shift out "+(this.pin.length>0?this.pin:"msg.topic");
+        },
+        oneditprepare: function() {
+
+          var updateproperties = function (value)
+          {
+            if (value === "none")
+            {
+              $("#node-register_pin").hide ();
+            }
+            else
+            {
+              $("#node-register_pin").show ();
+            }
+          };
+
+          updateproperties ();
+
+          $("#node-input-register").on ("change", function ()
+          {
+            updateproperties ($(this).val());
+          });
+        },
+    });
+
+    RED.nodes.registerType('shift in',{
+        category: 'IO Pins',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value:""},
+            pin: {
+                value: "0"
+            },
+            clock: {
+                value: "1"
+            },
+            msblsb: {
+                value: "0",
+                required: true
+            }
+        },
+        inputs:1,
+        outputs:1,
+        icon: "serial.png",
+        label: function() {
+            return this.name||"Shift in "+(this.pin.length>0?this.pin:"msg.topic");
+        }
+    });
+
+    RED.nodes.registerType('analogwrite',{
+        category: 'IO Pins',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value:""},
+            pin: {
+                value: "0",
+            }
+        },
+        inputs:1,
+        outputs:0,
+        icon: "analog-write.png",
+        align: 'right',
+        label: function() {
+            return this.name||"Analog Write "+(this.pin.length>0?this.pin:"msg.topic");
+        }
+    });
+
+    RED.nodes.registerType('analogread',{
+        category: 'IO Pins',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value:""},
+            pin: {
+                value: "0",
+            },
+            average: {
+                value: "1",
+                validate: RED.validators.number()
+            },
+            readarray: {
+                value: "1",
+                validate: RED.validators.number()
+            }
+        },
+        inputs:1,
+        outputs:1,
+        icon: "analog-read.png",
+        label: function() {
+            return this.name||"Analog Read "+(this.pin.length>0?this.pin:"msg.topic");
+        }
+    });
+
+    // RED.nodes.registerType('button',{
+    //     category: 'Signals',
+    //     color: '#a6bbcf',
+    //     defaults: {
+    //         name: {value:""},
+    //         button: {
+    //             value: "signal", 
+    //             required: true, 
+    //             validate: RED.validators.regex(/[A-Za-z]+/)
+    //         },
+    //         address:{values:""},
+    //         dashboarduuid:{value:""}
+    //     },
+    //     inputs:1,
+    //     outputs:1,
+    //     icon: "serial.png",
+    //     // align: 'left',
+    //     label: function() {
+    //         return this.name||"Button "+this.button;
+    //     }
+    // });
+    
+    RED.nodes.registerType('sendsignal',{
+        category: 'Signals',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value:""},
+            signal: {
+                value: "signal", 
+                required: true, 
+                validate: RED.validators.regex(/[A-Za-z]+/)
+            },
+            to: {value: 'dashboard'},
+            deviceid: {value: ''}
+            // address:{values:""},
+            // dashboarduuid:{value:""}
+        },
+        inputs:1,
+        outputs:0,
+        icon: "serial.png",
+        align: 'right',
+        label: function() {
+            return this.name||"Send signal "+this.signal;
+        },
+
+        oneditprepare: function() {
+
+          var updateproperties = function (value)
+          {
+            if (value == "dashboard")
+            {
+              $("#node-deviceid").hide ();
+            }
+            else if (value == "device")
+            {
+              $("#node-deviceid").show ();
+            }
+          };
+
+          updateproperties ();
+
+          $("#node-input-to").on ("change", function ()
+          {
+            updateproperties (this.value);
+          });
+        },
+    });
+</script>
+
+<script type="text/x-red" data-template-name="digitalwrite">
+    <div class="form-row">
+        <label for="node-input-pin"><i class="fa fa-circle"></i> Pin Number</label>
+        <input type="text" id="node-input-pin" placeholder="0">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="digitalwrite">
+    <p>Write a digital value on a pin. The value written is in <b>payload</b> and should be is HIGH (1) or LOW (0).</p>
+
+    <p>If no pin is specified, the pin number is the <b>topic</b> field of msg.</p>
+</script>
+
+
+<script type="text/x-red" data-template-name="digitalread">
+    <div class="form-row">
+        <label for="node-input-pin"><i class="fa fa-circle"></i> Pin Number</label>
+        <input type="number" id="node-input-pin" placeholder="0">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="digitalread">
+    <p>When it receives an input, reads a digital value from a pin. The value read is in <b>payload</b> and is HIGH (1) or LOW (0).</p>
+
+    <p>If no pin is specified, the pin number is the <b>topic</b> field of msg.</p>
+</script>
+
+
+<script type="text/x-red" data-template-name="shift out">
+    <div class="form-row">
+        <label for="node-input-pin"><i class="fa fa-circle"></i> Data Pin Number</label>
+        <input type="text" id="node-input-pin" placeholder="0">
+    </div>
+    <div class="form-row">
+        <label for="node-input-pin"><i class="fa fa-circle"></i> Clock Pin Number</label>
+        <input type="number" id="node-input-clock" placeholder="0">
+    </div>
+    <div class="form-row">
+        <label for="node-input-complete"><i class="fa fa-list"></i> Direction</label>
+        <select type="text" id="node-input-msblsb" style="display: inline-block; width: 250px; vertical-align: top;">
+            <option value="0">LSB first</option>
+            <option value="1">MSB first</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-register"><i class="fa fa-list"></i> Latch Register</label>
+        <select type="text" id="node-input-register" style="display: inline-block; width: 250px; vertical-align: top;">
+            <option value="none">Without</option>
+            <option value="rising_edge">Rising Edge</option>
+            <option value="falling_edge">Falling Edge</option>
+        </select>
+    </div>
+    <div class="form-row" id="node-register_pin">
+        <label for="node-input-register_pin"><i class="fa fa-circle"></i> Register Clock Pin Number</label>
+        <input type="text" id="node-input-register_pin" placeholder="0">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="shift out">
+    <p>Shifts out a byte value on a pin using the clock pin as clock. The value written is in <b>payload</b>.</p>
+
+    <p>If no data pin is specified, the pin number is the <b>topic</b> field of msg.</p>
+    <p>If no clock pin is specified, the pin number is the <b>clock</b> field of msg.</p>
+</script>
+
+
+<script type="text/x-red" data-template-name="shift in">
+    <div class="form-row">
+        <label for="node-input-pin"><i class="fa fa-circle"></i> Data Pin Number</label>
+        <input type="number" id="node-input-pin" placeholder="0">
+    </div>
+    <div class="form-row">
+        <label for="node-input-pin"><i class="fa fa-circle"></i> Clock Pin Number</label>
+        <input type="number" id="node-input-clock" placeholder="0">
+    </div>
+    <div class="form-row">
+        <label for="node-input-complete"><i class="fa fa-list"></i> Direction</label>
+        <select type="text" id="node-input-msblsb" style="display: inline-block; width: 250px; vertical-align: top;">
+            <option value="0">LSB first</option>
+            <option value="1">MSB first</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="shift in">
+    <p>When it receives an input, shifts in a byte value from a pin using the clock pin as clock. The value read is in <b>payload</b>.</p>
+
+    <p>If no data pin is specified, the pin number is the <b>topic</b> field of msg.</p>
+    <p>If no clock pin is specified, the pin number is the <b>clock</b> field of msg.</p>
+</script>
+
+
+
+<script type="text/x-red" data-template-name="analogwrite">
+    <div class="form-row">
+        <label for="node-input-pin"><i class="fa fa-circle"></i> Pin Number</label>
+        <input type="number" id="node-input-pin" placeholder="0">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="analogwrite">
+    <p>Write a PWM value on a pin. The value written is in [0, 255].</p>
+
+    <p>If no pin is specified, the pin number is the <b>topic</b> field of msg.</p>
+</script>
+
+<script type="text/x-red" data-template-name="analogread">
+    <div class="form-row">
+        <label for="node-input-pin"><i class="fa fa-circle"></i> Pin Number</label>
+        <input type="number" id="node-input-pin" placeholder="0">
+    </div>
+    <div class="form-row">
+        <label for="node-input-average"><i class="fa fa-circle"></i> Average out of </label>
+        <input type="number" id="node-input-average" placeholder="1">
+    </div>
+    <div class="form-row">
+        <label for="node-input-readarray"><i class="fa fa-circle"></i> Elements to read </label>
+        <input type="number" id="node-input-readarray" placeholder="1">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="analogread">
+    <p>When it receives an input, reads an analog value from a pin. The value read is in [0, 1023].</p>
+
+    <p>If no pin is specified, the pin number is the <b>topic</b> field of msg.</p>
+</script>
+
+<!--<script type="text/x-red" data-template-name="button">
+    <div class="form-row">
+        <label for="node-input-pin"><i class="icon-tag"></i> Button</label>
+        <input type="text" id="node-input-button" placeholder="button">
+    </div>
+    <div class="form-row">
+        <label for="node-input-address"><i class="icon-tag"></i> Address</label>
+        <input type="text" id="node-input-address" placeholder="">
+    </div>
+    <div class="form-row">
+        <label for="node-input-dashboarduuid"><i class="icon-tag"></i> Dashboard UUID</label>
+        <input type="text" id="node-input-dashboarduuid" placeholder="">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>-->
+
+<script type="text/x-red" data-template-name="sendsignal">
+    <div class="form-row">
+        <label for="node-input-to"><i class="fa fa-list"></i> To</label>
+        <select type="text" id="node-input-to" style="display: inline-block; width: 250px; vertical-align: tops;">
+            <option value="dashboard">Dashboard</option>
+            <option value="device">Device</option>
+        </select>
+    </div>
+    <div class="form-row" id="node-deviceid">
+        <label for="node-input-deviceid"><i class="icon-tag"></i> Device ID</label>
+        <input type="text" id="node-input-deviceid" placeholder="deviceid">
+    </div>
+    <div class="form-row">
+        <label for="node-input-pin"><i class="icon-tag"></i> Signal</label>
+        <input type="text" id="node-input-signal" placeholder="signal">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <!--<div class="form-row">
+        <label for="node-input-address"><i class="icon-tag"></i> Address</label>
+        <input type="text" id="node-input-address" placeholder="">
+    </div>
+    <div class="form-row">
+        <label for="node-input-dashboarduuid"><i class="icon-tag"></i> Dashboard UUID</label>
+        <input type="text" id="node-input-dashboarduuid" placeholder="">
+    </div>-->
+</script>
+
+<!--<script type="text/x-red" data-help-name="button">
+    <p>Sends the value of a signal, puts a flag if <b>flag</b> is set.</p>
+</script>-->
+
+<script type="text/x-red" data-help-name="sendsignal">
+    <p>Sends the value of a signal, puts a flag if <b>flag</b> is set.</p>
+</script>

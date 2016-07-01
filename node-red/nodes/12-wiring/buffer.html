@@ -1,0 +1,158 @@
+<!--
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!-- First, the content of the edit dialog is defined.                       -->
+<script type="text/x-red" data-template-name="buffer">
+
+    <div class="form-row" id="node-send">
+        <label for="node-input-send"><i class="fa fa-tasks"></i> Send </label>
+        <select id="node-input-send" style="width:270px !important">
+          <option value="full">when buffer is full</option>
+          <option value="event">when event received</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-sendarray"><i class="fa fa-tasks"></i> Store </label>
+        <select id="node-input-sendarray" style="width:270px !important">
+          <option value="array">array</option>
+          <option value="value">value</option>
+        </select>
+    </div>
+    <div id="node-size" class="form-row">
+        <label for="node-input-size"><i class="fa fa-tag"></i> Size</label>
+        <input type="spinner" id="node-input-size" placeholder="1000">
+    </div>
+    <div class="form-row">
+        <label for="node-input-shift"><i class="fa fa-tasks"></i> If buffer is full </label>
+        <select id="node-input-shift" style="width:270px !important">
+          <option value="drop">drop messages</option>
+          <option value="shift">shift messages</option>
+        </select>
+    </div>
+    <div class="form-row" id="node-window">
+        <input style="width: 30px;" type="checkbox" id="node-input-window"><label style="width: 250px;" for="node-input-window">Use a sliding window</label>
+    </div>
+    <div class="form-row" id="node-size_of_size_of_window">
+        <label style="width: 250px;" for="node-input-size_of_window">Size of sliding window</label>
+        <input style="width: 30px;" type="number" id="node-input-size_of_window">
+    </div>
+    <div class="form-row" id="node-mix_messages">
+        <input style="width: 30px;" type="checkbox" id="node-input-mix_messages"><label style="width: 250px;" for="node-input-mix_messages">Mix multiple message types</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+
+</script>
+
+<!-- Next, some simple help text is provided for the node.                   -->
+<script type="text/x-red" data-help-name="buffer">
+    <p>Store an array and sends it when it is full or when it receives a message with <b>event</b>. It stores as arrays all the components of the message and mixes them.</p>
+    <p>If a value is stored, it knows how to mix the messages. Sends the value when a messages is received with <b>event</b>.</p>
+    <p>If use sliding window is selected, the array wil delete one element at a time.</p>
+</script>
+
+<script type="text/x-red" data-template-name="set event">
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+
+</script>
+
+<!-- Next, some simple help text is provided for the node.                   -->
+<script type="text/x-red" data-help-name="set event">
+    <p>Sets the <b>event</b> porperty for msg. Useful for buffer.</p>
+</script>
+
+<!-- Finally, the node type is registered along with all of its properties   -->
+<script type="text/javascript">
+    RED.nodes.registerType('buffer',{
+        category: 'function',      // the palette category
+        color:"#E6E0F8",
+        defaults: {             // defines the editable properties of the node
+            name: {value:""},   //  along with default values.
+            send: {value:"full", required:true},
+            sendarray: {value: "array"},
+            size: {value:1000, required:true, validate:RED.validators.number()},
+            window: {value: false},
+            size_of_window: {value: 1, required:true, validate:RED.validators.number()},
+            shift: {value:"shift"},
+            mix_messages: {value:false}
+        },
+        inputs:1,                // set the number of inputs - only 0 or 1
+        outputs:1,               // set the number of outputs - 0 to n
+        icon: "buffer-icon.png",    // set the icon (held in public/icons)
+        label: function() {      // sets the default label contents
+            return this.name || (this.sendarray=="array"?"Send array of "+this.size+" when "+this.send:"Store value");
+        },
+        labelStyle: function() { // sets the class to apply to the label
+            return this.name?"node_label_italic":"";
+        },
+        oneditprepare: function() {
+
+          var updateproperties = function (value)
+          {
+            if (value == "array")
+            {
+              $("#node-mix_messages").hide ();
+              $("#node-window").show ();
+              $("#node-size_of_window").show ();
+              $("#node-send").show ();
+              $("#node-size").show ();
+            }
+            else if (value == "value")
+            {
+              $("#node-mix_messages").show ();
+              $("#node-size_of_window").hide ();
+              $("#node-send").hide ();
+              $("#node-size").hide (); 
+            }
+          };
+
+          updateproperties ();
+
+          $("#node-input-sendarray").on ("change", function ()
+          {
+            updateproperties (this.value);
+          });
+        },
+    });
+
+    RED.nodes.registerType('set event',{
+        category: 'function',      // the palette category
+        color:"#E6E0F8",
+        defaults: {             // defines the editable properties of the node
+            name: {value:""},   //  along with default values.
+        },
+        inputs:1,                // set the number of inputs - only 0 or 1
+        outputs:1,               // set the number of outputs - 0 to n
+        icon: "setevent-icon.png",    // set the icon (held in public/icons)
+        label: function() {      // sets the default label contents
+            return this.name || "Set event";
+        },
+        labelStyle: function() { // sets the class to apply to the label
+            return this.name?"node_label_italic":"";
+        },
+        oneditprepare: function() {
+
+
+
+        },
+    });
+</script>
+

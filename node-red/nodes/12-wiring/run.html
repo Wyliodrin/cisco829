@@ -1,0 +1,425 @@
+<!--
+  Copyright 2013 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/x-red" data-template-name="run">
+    <div class="form-row node-input-payload">
+        <label for="node-input-payloadType"><i class="icon-envelope"></i> Payload</label>
+        <select id="node-input-payloadType" style="width:125px !important">
+          <option value="date">timestamp</option>
+          <option value="none">blank</option>
+          <option value="string">string</option>
+          <option value="times">times</option>
+        </select>
+    </div>
+
+    <div class="form-row" id="node-input-row-payload">
+        <label for="node-input-payload"></label>
+        <input type="text" id="node-input-payload" placeholder="payload">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-topic"><i class="icon-tasks"></i> Topic</label>
+        <input type="text" id="node-input-topic" placeholder="topic">
+    </div>
+
+    <div class="form-row">
+        <label for=""><i class="icon-repeat"></i> Repeat</label>
+        <select id="run-time-type-select"  style="width: 288px"><option value="interval">interval</option><option value="interval-time">interval between times</option><option value="time">at a specific time</option></select>
+        <input type="hidden" id="node-input-repeat" placeholder="payload">
+        <input type="hidden" id="node-input-crontab" placeholder="payload">
+    </div>
+
+    <div class="form-row run-time-row hidden" id="run-time-row-interval">
+        every <input id="run-time-interval-count" class="run-time-count" value="1"></input>
+              <select style="width: 100px" id="run-time-interval-units"><option value="s">seconds</option><option value="m">minutes</option><option value="h">hours</option></select><br/>
+        <!-- on <select disabled id="run-time-interval-days" class="run-time-days"></select> -->
+    </div>
+
+    <div class="form-row run-time-row hidden" id="run-time-row-interval-time">
+        at every <select style="width: 90px" id="run-time-interval-time-units" class="run-time-int-count" value="1">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="10">10</option>
+            <option value="12">12</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+        </select> minutes<br/>
+        between <select id="run-time-interval-time-start" class="run-time-times"></select>
+        and <select id="run-time-interval-time-end" class="run-time-times"></select><br/>
+        on <select id="run-time-interval-time-days" class="run-time-days"></select>
+    </div>
+
+    <div class="form-row run-time-row hidden" id="run-time-row-time">
+        at <input id="run-time-time" value="12:00"></input><br/>
+        on <select id="run-time-time-days" class="run-time-days"></select>
+    </div>
+
+    <div class="form-row" id="node-once">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-once" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-once" style="width: 70%;">Fire once at start ?</label>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="name">
+    </div>
+
+    <div class="form-tips"><b>Note:</b> "interval between times" and "at a specific time" will use cron.<br/>See info box for details.</div>
+    <script>
+    {
+        $("#run-time-type-select").change(function() {
+            $("#node-input-crontab").val('');
+            var id = $("#run-time-type-select option:selected").val();
+            $(".run-time-row").hide();
+            $("#run-time-row-"+id).show();
+            if ((id == "none") || (id == "interval")) {
+                $("#node-once").show();
+            }
+            else {
+                $("#node-once").hide();
+                $("#node-input-once").prop('checked', false);
+            }
+        });
+
+        var days = [
+            {v:"*",t:"every day"},
+            {v:"1-5",t:"Mondays to Fridays"},
+            {v:"0,6",t:"Saturdays and Sundays"},
+            {v:"1",t:"Mondays"},
+            {v:"2",t:"Tuesdays"},
+            {v:"3",t:"Wednesdays"},
+            {v:"4",t:"Thursdays"},
+            {v:"5",t:"Fridays"},
+            {v:"6",t:"Saturdays"},
+            {v:"0",t:"Sundays"}
+        ];
+
+        $(".run-time-days").each(function() {
+            for (var d in days) {
+                $(this).append($("<option></option>").val(days[d].v).text(days[d].t));
+            }
+        });
+
+        $(".run-time-times").each(function() {
+            for (var i=0;i<24;i++) {
+                var l = (i<10?"0":"")+i+":00";
+                $(this).append($("<option></option>").val(i).text(l));
+            }
+        });
+
+        $(".run-time-count").spinner({
+            //max:60,
+            min:1
+        });
+
+        $("#run-time-interval-units").change(function() {
+            var units = $("#run-time-interval-units option:selected").val();
+            //$("#run-time-interval-days").prop("disabled",(units == "s")?"disabled":false);
+            //$(".run-time-count").spinner("option","max",(units == "h")?24:60);
+        });
+
+        $.widget( "ui.injecttimespinner", $.ui.spinner, {
+            options: {
+                // seconds
+                step: 60 * 1000,
+                // hours
+                page: 60
+            },
+            _parse: function( value ) {
+                if ( typeof value === "string" ) {
+                    // already a timestamp
+                    if ( Number( value ) == value ) {
+                        return Number( value );
+                    }
+                    var p = value.split(":");
+                    var offset = new Date().getTimezoneOffset();
+                    return (((Number(p[0])+1)*60)+Number(p[1])+offset)*60*1000;
+                }
+                return value;
+            },
+            _format: function( value ) {
+                var d = new Date(value);
+                var h = d.getHours();
+                var m = d.getMinutes();
+                return ((h<10)?"0":"")+h+":"+((m<10)?"0":"")+m;
+            }
+        });
+
+        $("#run-time-time").injecttimespinner();
+    };
+
+    </script>
+</script>
+<style>
+    .run-time-row {
+        padding-left: 110px;
+    }
+    .run-time-row select {
+        margin: 3px 0;
+    }
+    .run-time-days {
+        width: 262px;
+    }
+    .run-time-times {
+        width: 90px;
+    }
+    .run-time-row > .ui-spinner {
+        height: 28px;
+        margin: 3px 0;
+        border-color: rgb(204, 204, 204);
+    }
+    #run-time-time {
+        margin-top: 3px;
+        width: 75px;
+    }
+    .run-time-count {
+        width: 40px !important;
+    }
+</style>
+<script type="text/x-red" data-help-name="run">
+    <p>If no payload is specified the payload is set to the current time in millisecs since 1970. This allows subsequent functions to perform time based actions.</p>
+    <p>The repeat function does what it says on the tin and continuously sends the payload every x seconds.</p>
+    <p>The Fire once at start option actually waits 50mS before firing to give other nodes a chance to instantiate properly.</p>
+    <p><b>Note: </b>"Interval between times" and "at a specific time" will use cron. This means that 20 mins will be at the next hour, 20 mins past and 40 mins past - not in 20 minutes time.
+    If you want every 20 mins from now - use the basic "interval" option.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('run',{
+        category: 'input',
+        color:"#a6bbcf",
+        defaults: {
+            name: {value:""},
+            topic: {value:""},
+            payload: {value:""},
+            payloadType: {value:"date"},
+            repeat: {value:"1"},
+            crontab: {value:""},
+            once: {value:false}
+        },
+        inputs:0,
+        outputs:1,
+        icon: "inject.png",
+        label: function() {
+            if (this.payloadType == "string") {
+                return this.name||this.topic||this.payload||"run";
+            }
+            else { return this.name||"run"; }
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        },
+        oneditprepare: function() {
+            var repeattype = "none";
+            if (this.repeat != "" && this.repeat != 0) {
+                repeattype = "interval";
+                var r = "s";
+                var c = this.repeat;
+                if (this.repeat % 60 === 0) { r = "m"; c = c/60; }
+                if (this.repeat % 1440 === 0) { r = "h"; c = c/24; }
+                $("#run-time-interval-count").val(c);
+                $("#run-time-interval-units").val(r);
+                //$("#run-time-interval-units option").filter(function() {return $(this).val() == "s";}).attr('selected',true);
+                $("#run-time-interval-days").prop("disabled","disabled");
+            } else if (this.crontab) {
+                var cronparts = this.crontab.split(" ");
+                var days = cronparts[4];
+                if (!isNaN(cronparts[0]) && !isNaN(cronparts[1])) {
+                    repeattype = "time";
+                    // Fixed time
+                    var time = cronparts[1]+":"+cronparts[0];
+                    $("#run-time-time").val(time);
+                    $("#run-time-type-select option").filter(function() {return $(this).val() == "s";}).attr('selected',true);
+                    $("#run-time-time-days option").filter(function() {return $(this).val() == days;}).attr('selected',true);
+
+                } else if (cronparts[0] == "0") {
+                    // interval - hours
+                    var hours = cronparts[1].slice(2);
+                    repeattype = "interval";
+                    $("#run-time-interval-days").prop("disabled",false);
+                    $("#run-time-interval-days option").filter(function() {return $(this).val() == days;}).attr('selected',true);
+                    $("#run-time-interval-count").val(hours)
+                    $("#run-time-interval-units option").filter(function() {return $(this).val() == "h";}).attr('selected',true);
+                } else if (cronparts[1] == "*") {
+                    // interval - minutes
+                    var minutes = cronparts[0].slice(2);
+                    repeattype = "interval";
+                    $("#run-time-interval-days").prop("disabled",false);
+                    $("#run-time-interval-days option").filter(function() {return $(this).val() == days;}).attr('selected',true);
+                    $("#run-time-interval-count").val(minutes)
+                    $("#run-time-interval-units option").filter(function() {return $(this).val() == "m";}).attr('selected',true);
+                } else {
+                    repeattype = "interval-time";
+                    // interval - time period
+                    var minutes = cronparts[0].slice(2);
+                    $("#run-time-interval-time-units").val(minutes);
+                    $("#run-time-interval-time-days option").filter(function() {return $(this).val() == days;}).attr('selected',true);
+                    var time = cronparts[1];
+                    var timeparts = time.split(",");
+                    var start;
+                    var end;
+                    if (timeparts.length == 1) {
+                        // 0 or 0-10
+                        var hours = timeparts[0].split("-");
+                        if (hours.length == 1) {
+                            start = hours[0];
+                            end = Number(hours[0])+1;
+                        } else {
+                            start = hours[0];
+                            end = (Number(hours[1])+1)%24;
+                        }
+                    } else {
+                        // 23,0 or 17-23,0-10 or 23,0-2 or 17-23,0
+                        var startparts = timeparts[0].split("-");
+                        start = startparts[0];
+
+                        var endparts = timeparts[1].split("-");
+                        if (endparts.length == 1) {
+                            end = Number(endparts[0])+1;
+                        } else {
+                            end = Number(endparts[1])+1;
+                        }
+                    }
+                    $("#run-time-interval-time-start option").filter(function() {return $(this).val() == start;}).attr('selected',true);
+                    $("#run-time-interval-time-end option").filter(function() {return $(this).val() == end;}).attr('selected',true);
+
+                }
+            } else {
+                $("#run-time-type-select option").filter(function() {return $(this).val() == "none";}).attr('selected',true);
+            }
+
+            $(".run-time-row").hide();
+            $("#run-time-type-select option").filter(function() {return $(this).val() == repeattype;}).attr('selected',true);
+            $("#run-time-row-"+repeattype).show();
+
+            if (this.payloadType == null) {
+                if (this.payload == "") {
+                    this.payloadType = "date";
+                } else {
+                    this.payloadType = "string";
+                }
+            }
+
+            $("#node-input-payloadType").change(function() {
+                var id = $("#node-input-payloadType option:selected").val();
+                if (id == "string") {
+                    $("#node-input-row-payload").show();
+                } else {
+                    $("#node-input-row-payload").hide();
+                }
+            });
+            $("#node-input-payloadType").val(this.payloadType);
+            $("#node-input-payloadType").change();
+            $("#run-time-type-select").change();
+
+        },
+        oneditsave: function() {
+            var repeat = "";
+            var crontab = "";
+            var type = $("#run-time-type-select option:selected").val();
+            if (type == "none") {
+                // nothing
+            } else if (type == "interval") {
+                var count = $("#run-time-interval-count").val();
+                var units = $("#run-time-interval-units option:selected").val();
+                var days = $("#run-time-interval-days option:selected").val();
+                if (units == "s") {
+                    repeat = count;
+                } else {
+                    if (units == "m") {
+                        //crontab = "*/"+count+" * * * "+days;
+                        repeat = count * 60;
+                    } else if (units == "h") {
+                        //crontab = "0 */"+count+" * * "+days;
+                        repeat = count * 60 * 24;
+                    }
+                }
+            } else if (type == "interval-time") {
+                var count = $("#run-time-interval-time-units").val();
+                var startTime = Number($("#run-time-interval-time-start option:selected").val());
+                var endTime = Number($("#run-time-interval-time-end option:selected").val());
+                var days = $("#run-time-interval-time-days option:selected").val();
+                var timerange = "";
+                if (startTime == endTime) {
+                    //TODO: invalid
+                    repeat = "";
+                    crontab = "";
+                } else if (endTime == 0) {
+                    timerange = startTime+"-23";
+                } else if (startTime+1 < endTime) {
+                    timerange = startTime+"-"+(endTime-1);
+                } else if (startTime+1 == endTime) {
+                    timerange = startTime;
+                } else {
+                    var startpart = "";
+                    var endpart = "";
+                    if (startTime == 23) {
+                        startpart = "23";
+                    } else {
+                        startpart = startTime+"-23";
+                    }
+                    if (endTime == 1) {
+                        endpart = "0";
+                    } else {
+                        endpart = "0-"+(endTime-1);
+                    }
+                    timerange = startpart+","+endpart;
+                }
+                repeat = "";
+                crontab = "*/"+count+" "+timerange+" * * "+days;
+            } else if (type == "time") {
+                var time = $("#run-time-time").val();
+                var days = $("#run-time-time-days option:selected").val();
+                var parts = time.split(":");
+                repeat = "";
+                crontab = parts[1]+" "+parts[0]+" * * "+days;
+            }
+
+            $("#node-input-repeat").val(repeat);
+            $("#node-input-crontab").val(crontab);
+
+        },
+        // button: {
+        //     onclick: function() {
+        //         var label = (this.name||this.payload).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+        //         d3.xhr("run/"+this.id).post(function(err,resp) {
+        //                 if (err) {
+        //                     if (err.status == 404) {
+        //                         RED.notify("<strong>Error</strong>: run node not deployed","error");
+        //                     } else if (err.status == 500) {
+        //                         RED.notify("<strong>Error</strong>: run failed, see log for details.","error");
+        //                     } else if (err.status == 0) {
+        //                         RED.notify("<strong>Error</strong>: no response from server","error");
+        //                     } else {
+        //                         RED.notify("<strong>Error</strong>: unexpected error: ("+err.status+")"+err.response,"error");
+        //                     }
+        //                 } else if (resp.status == 200) {
+        //                     RED.notify("Successfully injected: "+label,"success");
+        //                 } else {
+        //                     RED.notify("<strong>Error</strong>: unexpected response: ("+resp.status+") "+resp.response,"error");
+        //                 }
+        //         });
+        //     }
+        // }
+    });
+
+</script>

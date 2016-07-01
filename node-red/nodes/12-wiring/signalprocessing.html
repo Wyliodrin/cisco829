@@ -1,0 +1,416 @@
+<!--
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!-- First, the content of the edit dialog is defined.                       -->
+
+<script type="text/x-red" data-template-name="octave">
+    <div class="form-row" style="margin-bottom: 0px;">
+            <label for="node-input-func"><i class="fa fa-wrench"></i> Function</label>
+            <input type="hidden" id="node-input-func" autofocus="autofocus">
+    </div>
+    <div class="form-row node-text-editor-row">
+        <div style="height: 250px;" class="node-text-editor" id="node-input-func-editor" ></div>
+    </div>
+    <div class="form-row" id="node-stdout">
+        <input style="width: 30px;" type="checkbox" id="node-input-stdout"><label style="width: 250px;" for="node-input-stdout">Show output</label>
+    </div>
+    <div class="form-row" id="node-stderr">
+        <input style="width: 30px;" type="checkbox" id="node-input-stderr"><label style="width: 250px;" for="node-input-stderr">Show errors</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="octave">
+  <p>A function block where you can write <b>Octave</b> code.</p>
+  <p>The message is passed in as an` object called <code>msg</code>.</p>
+  <p>By convention it will have a <code>msg.payload</code> property containing
+     the body of the message.</p>
+  <p>The function will return the <b>msg</b> object.</p>
+</script>
+
+<script type="text/x-red" data-template-name="python">
+    <div class="form-row" style="margin-bottom: 0px;">
+            <label for="node-input-func"><i class="fa fa-wrench"></i> Function</label>
+            <input type="hidden" id="node-input-func" autofocus="autofocus">
+    </div>
+    <div class="form-row node-text-editor-row">
+        <div style="height: 250px;" class="node-text-editor" id="node-input-func-editor" ></div>
+    </div>
+    <div class="form-row" id="node-stdout">
+        <input style="width: 30px;" type="checkbox" id="node-input-stdout"><label style="width: 250px;" for="node-input-stdout">Show output</label>
+    </div>
+    <div class="form-row" id="node-stderr">
+        <input style="width: 30px;" type="checkbox" id="node-input-stderr"><label style="width: 250px;" for="node-input-stderr">Show errors</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="python">
+  <p>A function block where you can write <b>Python</b> code.</p>
+  <p>The message is passed in as an` object called <code>msg</code>.</p>
+  <p>By convention it will have a <code>msg.payload</code> property containing
+     the body of the message.</p>
+  <p>The function will return the <b>msg</b> object.</p>
+</script>
+
+<script type="text/x-red" data-template-name="r language">
+    <div class="form-row" style="margin-bottom: 0px;">
+            <label for="node-input-func"><i class="fa fa-wrench"></i> Function</label>
+            <input type="hidden" id="node-input-func" autofocus="autofocus">
+    </div>
+    <div class="form-row node-text-editor-row">
+        <div style="height: 250px;" class="node-text-editor" id="node-input-func-editor" ></div>
+    </div>
+    <div class="form-row" id="node-stdout">
+        <input style="width: 30px;" type="checkbox" id="node-input-stdout"><label style="width: 250px;" for="node-input-stdout">Show output</label>
+    </div>
+    <div class="form-row" id="node-stderr">
+        <input style="width: 30px;" type="checkbox" id="node-input-stderr"><label style="width: 250px;" for="node-input-stderr">Show errors</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="r language">
+  <p>A function block where you can write <b>R Language</b> code.</p>
+  <p>The message is passed in as an` object called <code>msg</code>.</p>
+  <p>By convention it will have a <code>msg.payload</code> property containing
+     the body of the message.</p>
+  <p>The function will return the <b>msg</b> object.</p>
+</script>
+
+<script type="text/x-red" data-template-name="fourier">
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row" id="node-inverse">
+        <input style="width: 30px;" type="checkbox" id="node-input-inverse"><label style="width: 250px;" for="node-input-inverse">Inverse</label>
+    </div>
+    <div class="form-row" id="node-window_function">
+        <label for="node-input-window_function"><i class="fa fa-tasks"></i> Window Function </label>
+        <select id="node-input-window_function" style="width:270px !important">
+          <option value="bartlettHann">Bartlett Hann</option>
+          <option value="bartlett">Bartlett</option>
+          <option value="blackman">Blackman</option>
+          <option value="blackmanHarris">Blackman Harris</option>
+          <option value="blackmanNuttall">Blckman Nuttall</option>
+          <option value="cosine">Cosine</option>
+          <option value="exactBlackman">Exact Blackman</option>
+          <option value="flatTop">Flat top</option>
+          <option value="gaussian">Gaussian</option>
+          <option value="hamming">Hamming</option>
+          <option value="hann">Hann</option>
+          <option value="lanczos">Lanczos</option>
+          <option value="nuttall">Nuttall</option>
+          <option value="rectangular">Rectangular</option>
+          <option value="triangular">Triangular</option>
+          <option value="tukey">Turkey</option>
+          <option value="welch">Welch</option>
+        </select>
+    </div>
+</script>
+
+<!-- Next, some simple help text is provided for the node.                   -->
+<script type="text/x-red" data-help-name="fft">
+    <p>Computes FFT or iFFT. The signal is in the <b>payload</b>.</p>
+    <p>The real part is <b>payload</b> or <b>payload[0]</b></p>
+    <p>The imaginary part is <b>payload[1]</b></p>
+    <p>The fields <b>r</b> and <b><i</b> may also memorize the signal.</p>
+</script>
+
+<!-- Finally, the node type is registered along with all of its properties   -->
+<script type="text/javascript">
+
+      RED.nodes.registerType('octave',{
+        color:"#e6e0e8",
+        category: 'signal processing',
+        defaults: {
+            name: {value:""},
+            func: {value:"\nwarning (\"off\");\nmsg"},
+            stdout: {value:true},
+            stderr: {value:true}
+            // outputs: {value:1}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "foctave.png",
+        label: function() {
+            return this.name;
+        },
+        oneditprepare: function() {
+            var that = this;
+            // $( "#node-input-outputs" ).spinner({
+            //     min:1
+            // });
+            function functionDialogResize() {
+                var rows = $("#dialog-form>div:not(.node-text-editor-row)");
+                var height = $("#dialog-form").height();
+                for (var i=0;i<rows.size();i++) {
+                    height -= $(rows[i]).outerHeight(true);
+                }
+                var editorRow = $("#dialog-form>div.node-text-editor-row");
+                height -= (parseInt(editorRow.css("marginTop"))+parseInt(editorRow.css("marginBottom")));
+                $(".node-text-editor").css("height",height+"px");
+                that.editor.resize();
+            }
+            $( "#dialog" ).on("dialogresize", functionDialogResize);
+            $( "#dialog" ).one("dialogopen", function(ev) {
+                var size = $( "#dialog" ).dialog('option','sizeCache-function');
+                if (size) {
+                    $("#dialog").dialog('option','width',size.width);
+                    $("#dialog").dialog('option','height',size.height);
+                    functionDialogResize();
+                }
+            });
+            $( "#dialog" ).one("dialogclose", function(ev,ui) {
+                var height = $( "#dialog" ).dialog('option','height');
+                $( "#dialog" ).off("dialogresize",functionDialogResize);
+            });
+            this.editor = RED.editor.createEditor({
+                id: 'node-input-func-editor',
+                mode: 'ace/mode/matlab',
+                theme: 'ace/mode/chrome',
+                value: $("#node-input-func").val()
+            });
+            RED.library.create({
+                url:"functions", // where to get the data from
+                type:"function", // the type of object the library is for
+                editor:this.editor, // the field name the main text body goes to
+                mode:"ace/mode/matlab",
+                fields:['name','outputs']
+            });
+            this.editor.focus();
+        },
+        oneditsave: function() {
+            var annot = this.editor.getSession().getAnnotations();
+            this.noerr = 0;
+            $("#node-input-noerr").val(0);
+            for (var k=0; k < annot.length; k++) {
+                //console.log(annot[k].type,":",annot[k].text, "on line", annot[k].row);
+                if (annot[k].type === "error") {
+                    $("#node-input-noerr").val(annot.length);
+                    this.noerr = annot.length;
+                }
+            }
+            $("#node-input-func").val(this.editor.getValue());
+            delete this.editor;
+        }
+      });
+    
+    RED.nodes.registerType('python',{
+        color:"#e6e0e8",
+        category: 'signal processing',
+        defaults: {
+            name: {value:""},
+            func: {value:"print msg\n"},
+            stdout: {value:true},
+            stderr: {value:true}
+            // outputs: {value:1}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "fpython.png",
+        label: function() {
+            return this.name;
+        },
+        oneditprepare: function() {
+            var that = this;
+            // $( "#node-input-outputs" ).spinner({
+            //     min:1
+            // });
+            function functionDialogResize() {
+                var rows = $("#dialog-form>div:not(.node-text-editor-row)");
+                var height = $("#dialog-form").height();
+                for (var i=0;i<rows.size();i++) {
+                    height -= $(rows[i]).outerHeight(true);
+                }
+                var editorRow = $("#dialog-form>div.node-text-editor-row");
+                height -= (parseInt(editorRow.css("marginTop"))+parseInt(editorRow.css("marginBottom")));
+                $(".node-text-editor").css("height",height+"px");
+                that.editor.resize();
+            }
+            $( "#dialog" ).on("dialogresize", functionDialogResize);
+            $( "#dialog" ).one("dialogopen", function(ev) {
+                var size = $( "#dialog" ).dialog('option','sizeCache-function');
+                if (size) {
+                    $("#dialog").dialog('option','width',size.width);
+                    $("#dialog").dialog('option','height',size.height);
+                    functionDialogResize();
+                }
+            });
+            $( "#dialog" ).one("dialogclose", function(ev,ui) {
+                var height = $( "#dialog" ).dialog('option','height');
+                $( "#dialog" ).off("dialogresize",functionDialogResize);
+            });
+            this.editor = RED.editor.createEditor({
+                id: 'node-input-func-editor',
+                mode: 'ace/mode/python',
+                theme: 'ace/mode/chrome',
+                value: $("#node-input-func").val()
+            });
+            RED.library.create({
+                url:"functions", // where to get the data from
+                type:"function", // the type of object the library is for
+                editor:this.editor, // the field name the main text body goes to
+                mode:"ace/mode/python",
+                fields:['name','outputs']
+            });
+            this.editor.focus();
+        },
+        oneditsave: function() {
+            var annot = this.editor.getSession().getAnnotations();
+            this.noerr = 0;
+            $("#node-input-noerr").val(0);
+            for (var k=0; k < annot.length; k++) {
+                //console.log(annot[k].type,":",annot[k].text, "on line", annot[k].row);
+                if (annot[k].type === "error") {
+                    $("#node-input-noerr").val(annot.length);
+                    this.noerr = annot.length;
+                }
+            }
+            $("#node-input-func").val(this.editor.getValue());
+            delete this.editor;
+        }
+      });
+
+      RED.nodes.registerType('r language',{
+        color:"#e6e0e8",
+        category: 'signal processing',
+        defaults: {
+            name: {value:""},
+            func: {value:"\nmsg"},
+            stdout: {value:true},
+            stderr: {value:true}
+            // outputs: {value:1}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "frlanguage.png",
+        label: function() {
+            return this.name;
+        },
+        oneditprepare: function() {
+            var that = this;
+            // $( "#node-input-outputs" ).spinner({
+            //     min:1
+            // });
+            function functionDialogResize() {
+                var rows = $("#dialog-form>div:not(.node-text-editor-row)");
+                var height = $("#dialog-form").height();
+                for (var i=0;i<rows.size();i++) {
+                    height -= $(rows[i]).outerHeight(true);
+                }
+                var editorRow = $("#dialog-form>div.node-text-editor-row");
+                height -= (parseInt(editorRow.css("marginTop"))+parseInt(editorRow.css("marginBottom")));
+                $(".node-text-editor").css("height",height+"px");
+                that.editor.resize();
+            }
+            $( "#dialog" ).on("dialogresize", functionDialogResize);
+            $( "#dialog" ).one("dialogopen", function(ev) {
+                var size = $( "#dialog" ).dialog('option','sizeCache-function');
+                if (size) {
+                    $("#dialog").dialog('option','width',size.width);
+                    $("#dialog").dialog('option','height',size.height);
+                    functionDialogResize();
+                }
+            });
+            $( "#dialog" ).one("dialogclose", function(ev,ui) {
+                var height = $( "#dialog" ).dialog('option','height');
+                $( "#dialog" ).off("dialogresize",functionDialogResize);
+            });
+            this.editor = RED.editor.createEditor({
+                id: 'node-input-func-editor',
+                mode: 'ace/mode/r',
+                theme: 'ace/mode/chrome',
+                value: $("#node-input-func").val()
+            });
+            RED.library.create({
+                url:"functions", // where to get the data from
+                type:"function", // the type of object the library is for
+                editor:this.editor, // the field name the main text body goes to
+                mode:"ace/mode/r",
+                fields:['name','outputs']
+            });
+            this.editor.focus();
+        },
+        oneditsave: function() {
+            var annot = this.editor.getSession().getAnnotations();
+            this.noerr = 0;
+            $("#node-input-noerr").val(0);
+            for (var k=0; k < annot.length; k++) {
+                //console.log(annot[k].type,":",annot[k].text, "on line", annot[k].row);
+                if (annot[k].type === "error") {
+                    $("#node-input-noerr").val(annot.length);
+                    this.noerr = annot.length;
+                }
+            }
+            $("#node-input-func").val(this.editor.getValue());
+            delete this.editor;
+        }
+      });
+
+    RED.nodes.registerType('fourier',{
+        category: 'signal processing',      // the palette category
+        color:"#E6E0F8",
+        defaults: {             // defines the editable properties of the node
+            name: {value:""},   //  along with default values.
+            inverse: {value:false},
+            window_function: {value: "rectangular"}
+        },
+        inputs:1,                // set the number of inputs - only 0 or 1
+        outputs:1,               // set the number of outputs - 0 to n
+        icon: "serial.png",    // set the icon (held in public/icons)
+        label: function() {      // sets the default label contents
+          console.log (this.inverse);
+            return this.name || ((this.inverse?"inverse":"")+" FFT");
+        },
+        labelStyle: function() { // sets the class to apply to the label
+            return this.name?"node_label_italic":"";
+        },
+        oneditprepare: function() {
+
+          var updateproperties = function (value)
+          {
+            console.log (value);
+            if (value == true)
+            {
+              $("#node-window_function").hide ();
+            }
+            else if (value == false)
+            {
+              $("#node-window_function").show ();
+            }
+          };
+
+          updateproperties ();
+
+          $("#node-input-inverse").on ("change", function ()
+          {
+            updateproperties ($(this).is(":checked"));
+          });
+        },
+    });
+</script>
+

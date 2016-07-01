@@ -1,0 +1,475 @@
+<!--
+ Copyright (c) 2014. Knowledge Media Institute - The Open University
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+     http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<!--
+ NodeRed node with support for BLE interaction
+ @author <a href="mailto:carlos.pedrinaci@open.ac.uk">Carlos Pedrinaci</a> (KMi - The Open University)
+-->
+
+<script type="text/x-red" data-template-name="scan ble">
+   <!-- data-template-name identifies the node type this is for              -->
+
+   <!-- Each of the following divs creates a field in the edit dialog.       -->
+   <!-- Generally, there should be an input for each property of the node.   -->
+   <!-- The for and id attributes identify the corresponding property        -->
+   <!-- (with the 'node-input-' prefix).                                     -->
+   <!-- The available icon classes are defined Twitter Bootstrap glyphicons  -->
+
+    <!-- Limit to list of UUIDs -->
+    <div class="form-row">
+        <label for="node-input-uuids"><i class="fa fa-tasks"></i> Restrict by Service UUID</label>
+        <input type="text" id="node-input-uuids" placeholder="Comma separated list">
+    </div>
+    <div class="form-tips">Leave empty for scanning all devices offering any service.</div>
+
+    <!-- Allow duplicates -->
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-duplicates" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-duplicates" style="width: 70%;">Allow duplicates?</label>
+    </div>
+
+    <!-- By convention, most nodes have a 'name' property. The following div -->
+    <!-- provides the necessary field. Should always be the last option      -->
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+
+</script>
+
+<script type="text/x-red" data-template-name="read ble">
+    <!-- Limit to list of UUIDs -->
+    <div class="form-row">
+        <label for="node-input-ids"><i class="fa fa-tasks"></i> Restrict by Name</label>
+        <input type="text" id="node-input-ids" placeholder="Comma separated list">
+    </div>
+    <div class="form-row">
+        <label for="node-input-addresses"><i class="fa fa-tasks"></i> Restrict by UUID</label>
+        <input type="text" id="node-input-addresses" placeholder="Comma separated list">
+    </div>
+    <div class="form-row">
+        <label for="node-input-service"><i class="fa fa-tasks"></i> Service</label>
+        <input type="text" id="node-input-service" placeholder="">
+    </div>
+    <div class="form-row">
+        <label for="node-input-characteristic"><i class="fa fa-tasks"></i> Characteristic</label>
+        <input type="text" id="node-input-characteristic" placeholder="">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-datatype"><i class="fa fa-tasks"></i> Data Type</label>
+        <select type="text" id="node-input-datatype" style="width:72%;">
+            <option value="string">Text (string)</option>
+            <option value="uint8">8 Bit Unsigned Integer</option>
+            <option value="int8">8 Bit Signed Integer</option>
+            <option value="uint16">16 Bit Unsigned Integer</option>
+            <option value="int16">16 Bit Signed Integer</option>
+            <option value="uint32">32 Bit Unsigned Integer</option>
+            <option value="int32">32 Bit Signed Integer</option>
+            <option value="float">32 Bit Float</option>
+        </select>
+    </div>
+
+    <!-- By convention, most nodes have a 'name' property. The following div -->
+    <!-- provides the necessary field. Should always be the last option      -->
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+
+</script>
+
+<script type="text/x-red" data-template-name="notify ble">
+    <!-- Limit to list of UUIDs -->
+    <div class="form-row">
+        <label for="node-input-ids"><i class="fa fa-tasks"></i> Restrict by Name</label>
+        <input type="text" id="node-input-ids" placeholder="Comma separated list">
+    </div>
+    <div class="form-row">
+        <label for="node-input-addresses"><i class="fa fa-tasks"></i> Restrict by UUID</label>
+        <input type="text" id="node-input-addresses" placeholder="Comma separated list">
+    </div>
+    <div class="form-row">
+        <label for="node-input-service"><i class="fa fa-tasks"></i> Service</label>
+        <input type="text" id="node-input-service" placeholder="">
+    </div>
+    <div class="form-row">
+        <label for="node-input-characteristic"><i class="fa fa-tasks"></i> Characteristic</label>
+        <input type="text" id="node-input-characteristic" placeholder="">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-datatype"><i class="fa fa-tasks"></i> Data Type</label>
+        <select type="text" id="node-input-datatype" style="width:72%;">
+            <option value="string">Text (string)</option>
+            <option value="uint8">8 Bit Unsigned Integer</option>
+            <option value="int8">8 Bit Signed Integer</option>
+            <option value="uint16">16 Bit Unsigned Integer</option>
+            <option value="int16">16 Bit Signed Integer</option>
+            <option value="uint32">32 Bit Unsigned Integer</option>
+            <option value="int32">32 Bit Signed Integer</option>
+            <option value="float">32 Bit Float</option>
+        </select>
+    </div>
+
+    <!-- By convention, most nodes have a 'name' property. The following div -->
+    <!-- provides the necessary field. Should always be the last option      -->
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+
+</script>
+
+<script type="text/x-red" data-template-name="write ble">
+    <!-- Limit to list of UUIDs -->
+    <div class="form-row">
+        <label for="node-input-ids"><i class="fa fa-tasks"></i> Restrict by Name</label>
+        <input type="text" id="node-input-ids" placeholder="Comma separated list">
+    </div>
+    <div class="form-row">
+        <label for="node-input-addresses"><i class="fa fa-tasks"></i> Restrict by UUID</label>
+        <input type="text" id="node-input-addresses" placeholder="Comma separated list">
+    </div>
+    <div class="form-row">
+        <label for="node-input-service"><i class="fa fa-tasks"></i> Service</label>
+        <input type="text" id="node-input-service" placeholder="">
+    </div>
+    <div class="form-row">
+        <label for="node-input-characteristic"><i class="fa fa-tasks"></i> Characteristic</label>
+        <input type="text" id="node-input-characteristic" placeholder="">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-datatype"><i class="fa fa-tasks"></i> Data Type</label>
+        <select type="text" id="node-input-datatype" style="width:72%;">
+            <option value="string">Text (string)</option>
+            <option value="uint8">8 Bit Unsigned Integer</option>
+            <option value="int8">8 Bit Signed Integer</option>
+            <option value="uint16">16 Bit Unsigned Integer</option>
+            <option value="int16">16 Bit Signed Integer</option>
+            <option value="uint32">32 Bit Unsigned Integer</option>
+            <option value="int32">32 Bit Signed Integer</option>
+            <option value="float">32 Bit Float</option>
+        </select>
+    </div>
+
+    <!-- By convention, most nodes have a 'name' property. The following div -->
+    <!-- provides the necessary field. Should always be the last option      -->
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+
+</script>
+
+
+<!-- Next, some simple help text is provided for the node.                   -->
+<script type="text/x-red" data-help-name="scan ble">
+    <p>This node allows scanning for BLE devices, restricted if necessary by the services they offer.</p>
+    <p>This node will generate one message per BLE device detected according to the node configuration.</p>
+    <p>The <b>msg.payload</b> will contain the <i>peripheral uuid</i> and the <i>local name</i> of the BLE device detected.</p>
+    <p>Additionally it will set the following values:</p>
+    <ul>
+        <li>Sets the <b>msg.peripheralUuid</b> to the <i>peripheral uuid</i> of the BLE device detected.</li>
+        <li>Sets the <b>msg.rssi</b> to the <i>received signal strength indicator (RSSI)</i> of the BLE device detected.</li>
+        <li>Sets <b>msg.localName</b> to the name of the device if any.</li>
+        <li>Sets <b>msg.detectedAt</b> to the moment the device was detected on milliseconds since 1 Jan 1970.</li>
+        <li>Sets <b>msg.detectedBy</b> to the name of the machine that detected the BLE device.</li>
+        <li>Sets <b>msg.advertisement</b> to the full advertisement of the BLE device (see Noble documentation).</li>
+    </ul>
+    <p>If the device follows the iBeacon specification, the message will also contain the following properties</p>
+    <ul>
+        <li>Sets the <b>msg.manufacturerUuid</b> to the <i>uuid</i> of the manufacturer of the BLE device detected.</li>
+        <li>Sets the <b>msg.major</b> to the <i>major number</i> of the manufacturer of the BLE device detected.</li>
+        <li>Sets the <b>msg.minor</b> to the <i>minor number</i> of the manufacturer of the BLE device detected.</li>
+        <li>Sets the <b>msg.measuredPower</b> to the <i>measured power at one meter</i> of the BLE device detected.</li>
+        <li>Sets the <b>msg.accuracy</b> to the <i>accuracy</i> estimated for this measurement.</li>
+        <li>Sets the <b>msg.proximity</b> to the <i>proximity</i> guessed for this device. The value will be one of: 'unknown', 'immediate', 'near', 'far' </li>
+    </ul>
+</script>
+
+<!-- Finally, the node type is registered along with all of its properties   -->
+<!-- The example below shows a small subset of the properties that can be set-->
+
+<script type="text/javascript">
+    RED.nodes.registerType('scan ble',{
+        category: 'Bluetooth',      // the palette category
+        color:"#207FC3",
+        defaults: {             // defines the editable properties of the node
+            uuids: {value:"", validate:RED.validators.regex(/^([a-fA-F0-9]{32}){0,1}(?:,[a-fA-F0-9]{32})*$/)},
+            duplicates: {value:false},
+            name: {value:""}
+        },
+        inputs:0,               // set the number of inputs - only 0 or 1
+        outputs:1,              // set the number of outputs - 0 to n
+        // set the icon (held in icons dir below where you save the node)
+        icon: "bluetooth.png",     // saved in  icons/myicon.png
+        label: function() {     // sets the default label contents
+            if (this.name) {
+                return this.name;
+            } else {
+                return "Scan BLEs";
+            }
+        },
+        labelStyle: function() { // sets the class to apply to the label
+            return this.name ? "node_label_italic" : "";
+        }
+    });
+
+RED.nodes.registerType('read ble',{
+        category: 'Bluetooth',      // the palette category
+        color:"#207FC3",
+        defaults: {             // defines the editable properties of the node
+            ids: {value:""},
+            addresses: {value:""},
+            // duplicates: {value:false},
+            service: {value:""},
+            characteristic: {value:""},
+            datatype: {value:"string"},
+            name: {value:""}
+        },
+        inputs:1,               // set the number of inputs - only 0 or 1
+        outputs:1,              // set the number of outputs - 0 to n
+        // set the icon (held in icons dir below where you save the node)
+        icon: "bluetooth.png",     // saved in  icons/myicon.png
+        label: function() {     // sets the default label contents
+            if (this.name) {
+                return this.name;
+            } else {
+                return "Read BLEs";
+            }
+        },
+        labelStyle: function() { // sets the class to apply to the label
+            return this.name ? "node_label_italic" : "";
+        }
+    });
+
+RED.nodes.registerType('notify ble',{
+        category: 'Bluetooth',      // the palette category
+        color:"#207FC3",
+        defaults: {             // defines the editable properties of the node
+            ids: {value:""},
+            addresses: {value:""},
+            // duplicates: {value:false},
+            service: {value:""},
+            characteristic: {value:""},
+            datatype: {value:"string"},
+            name: {value:""}
+        },
+        inputs:1,               // set the number of inputs - only 0 or 1
+        outputs:1,              // set the number of outputs - 0 to n
+        // set the icon (held in icons dir below where you save the node)
+        icon: "bluetooth.png",     // saved in  icons/myicon.png
+        label: function() {     // sets the default label contents
+            if (this.name) {
+                return this.name;
+            } else {
+                return "Notify BLEs";
+            }
+        },
+        labelStyle: function() { // sets the class to apply to the label
+            return this.name ? "node_label_italic" : "";
+        }
+    });
+
+RED.nodes.registerType('write ble',{
+        category: 'Bluetooth',      // the palette category
+        color:"#207FC3",
+        defaults: {             // defines the editable properties of the node
+            ids: {value:""},
+            addresses: {value:""},
+            // duplicates: {value:false},
+            service: {value:""},
+            characteristic: {value:""},
+            datatype: {value:"string"},
+            name: {value:""}
+        },
+        inputs:1,               // set the number of inputs - only 0 or 1
+        outputs:1,              // set the number of outputs - 0 to n
+        // set the icon (held in icons dir below where you save the node)
+        icon: "bluetooth.png",     // saved in  icons/myicon.png
+        label: function() {     // sets the default label contents
+            if (this.name) {
+                return this.name;
+            } else {
+                return "Write BLEs";
+            }
+        },
+        labelStyle: function() { // sets the class to apply to the label
+            return this.name ? "node_label_italic" : "";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="ble in">
+    <div class="form-row">
+        <label for="node-input-arduino"><i class="fa fa-tasks"></i> Arduino</label>
+        <input type="text" id="node-input-arduino">
+    </div>
+    <div class="form-row">
+        <label for="node-input-pin"><i class="fa fa-circle"></i> Pin</label>
+        <input type="text" id="node-input-pin" placeholder="2">
+    </div>
+    <div class="form-row">
+        <label for="node-input-state"><i class="fa fa-wrench"></i> Type</label>
+        <select type="text" id="node-input-state" style="width: 150px;">
+            <option value="INPUT">Digital pin</option>
+            <option value="ANALOG">Analogue pin</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-tips"><b>Note:</b> You cannot use the same pin for both output and input.</div>
+</script>
+
+<script type="text/x-red" data-help-name="ble in">
+    <p>Arduino input node. Connects to local Arduino and monitors the selected pin for changes. Uses <a href="http://firmata.org/" target="_new"><i>Firmata</i>.</a></p>
+    <p>The Arduino must be loaded with the Standard Firmata sketch available in the Arduino examples.</p>
+    <p>You can select either Digital or Analogue input. Outputs the value read as <b>msg.payload</b> and the pin number as <b>msg.topic</b>.</p>
+    <p>It only outputs on a change of value - fine for digital inputs, but you can get a lot of data from analogue pins which you must then handle.</p>
+    <p>You can set the sample rate in ms from 20 to 65535.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('ble in',{
+        category: 'Bluetooth',
+        color:"#3fadb5",
+        defaults: {
+            name: {value:""},
+            pin: {value:"",required:true},
+            state: {value:"INPUT",required:true},
+            arduino: {type:"ble-board"}
+        },
+        inputs:0,
+        outputs:1,
+        icon: "bluetooth.png",
+        label: function() {
+            var a = "";
+            if (this.state == "ANALOG") a = "A";
+            return this.name||"Pin: "+a+this.pin;
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="ble out">
+    <div class="form-row">
+        <label for="node-input-arduino"><i class="fa fa-tasks"></i> Arduino</label>
+        <input type="text" id="node-input-arduino">
+    </div>
+    <div class="form-row">
+        <label for="node-input-pin"><i class="fa fa-circle"></i> Pin</label>
+        <input type="text" id="node-input-pin" placeholder="13">
+    </div>
+    <div class="form-row">
+        <label for="node-input-state"><i class="fa fa-wrench"></i> Type</label>
+        <select type="text" id="node-input-state" style="width: 200px;">
+            <option value="OUTPUT">Digital (0/1)</option>
+            <option value="PWM">Analogue (0-255)</option>
+            <option value="SERVO">Servo (0-180)</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-tips"><b>Note:</b> You cannot use the same pin for both output and input.</div>
+</script>
+
+<script type="text/x-red" data-help-name="ble out">
+    <p>Arduino output node. Connects to local Arduino and writes to the selected digital pin. Uses <a href="http://firmata.org/" target="_new"><i>Firmata</i>.</a></p>
+    <p>The Arduino must be loaded with the Standard Firmata sketch available in the Arduino examples.</p>
+    <p>You can select Digital, Analogue (PWM) or Servo type outputs. Expects a numeric value in <b>msg.payload</b>. The pin number is set in the properties panel.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('ble out',{
+        category: 'Bluetooth',
+        color:"#3fadb5",
+        defaults: {
+            name: {value:""},
+            pin: {value:"",required:true},
+            state: {value:"",required:true},
+            arduino: {type:"ble-board"}
+        },
+        inputs:1,
+        outputs:0,
+        icon: "bluetooth.png",
+        align: "right",
+        label: function() {
+            return this.name||"Pin: "+this.pin;
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        }
+    });
+</script>
+
+
+<script type="text/x-red" data-template-name="ble-board">
+    <div class="form-row">
+        <label for="node-config-input-device"><i class="fa fa-random"></i> Name</label>
+        <input type="text" id="node-config-input-device" style="width:60%;" placeholder=""/>
+        <a id="node-config-lookup-serial" class="btn"><i id="node-config-lookup-serial-icon" class="fa fa-search"></i></a>
+    </div>
+    <div class="form-tips"><b>Tip:</b> Use search to try to auto-detect serial port.</div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('ble-board',{
+        category: 'config',
+        defaults: {
+            device: {value:"",required:true}
+        },
+        label: function() {
+            return this.device||"arduino";
+        },
+        oneditprepare: function() {
+            try {
+                $("#node-config-input-device").autocomplete( "destroy" );
+            } catch(err) { }
+            $("#node-config-lookup-serial").click(function() {
+                $("#node-config-lookup-serial-icon").removeClass('fa-search');
+                $("#node-config-lookup-serial-icon").addClass('spinner');
+                $("#node-config-lookup-serial").addClass('disabled');
+
+                $.getJSON('arduinoports',function(data) {
+                    $("#node-config-lookup-serial-icon").addClass('fa-search');
+                    $("#node-config-lookup-serial-icon").removeClass('spinner');
+                    $("#node-config-lookup-serial").removeClass('disabled');
+                    var ports = [];
+                    $.each(data, function(i, port){
+                        ports.push(port);
+                    });
+                    $("#node-config-input-device").autocomplete({
+                        source:ports,
+                        minLength:0,
+                        close: function( event, ui ) {
+                            $("#node-config-input-device").autocomplete( "destroy" );
+                        }
+                    }).autocomplete("search","");
+                });
+            });
+        }
+    });
+</script>

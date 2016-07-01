@@ -1,0 +1,179 @@
+<!--
+  Copyright 2013,2014 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/x-red" data-template-name="e-mail">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-envelope"></i> To</label>
+        <input type="text" id="node-input-name" placeholder="email@address.com">
+    </div>
+    <!-- <div class="form-row">
+        <label for="node-input-pin"><i class="fa fa-asterisk"></i> Service</label>
+        <select type="text" id="node-input-pin" style="width: 150px;">
+            <option value="-" disabled> </option>
+            <option value="DynectEmail">DynectEmail</option>
+            <option value="Gmail">Gmail</option>
+            <option value="hot.ee">hot.ee</option>
+            <option value="Hotmail">Hotmail</option>
+            <option value="iCloud">iCloud</option>
+            <option value="mail.ee">mail.ee</option>
+            <option value="Mail.Ru">Mail.Ru</option>
+            <option value="Mailgun">Mailgun</option>
+            <option value="Mailjet">Mailjet</option>
+            <option value="Mandrill">Mandrill</option>
+            <option value="Postmark">Postmark</option>
+            <option value="QQ">QQ</option>
+            <option value="QQex">QQex</option>
+            <option value="SendGrid">SendGrid</option>
+            <option value="SendCloud">SendCloud</option>
+            <option value="SES">SES</option>
+            <option value="Yahoo">Yahoo</option>
+            <option value="yandex">yandex</option>
+            <option value="Zoho">Zoho</option>
+         </select>
+    </div> -->
+    <div class="form-row">
+        <label for="node-input-server"><i class="fa fa-globe"></i> Server</label>
+        <input type="text" id="node-input-server" placeholder="smtp.gmail.com">
+    </div>
+    <div class="form-row">
+        <label for="node-input-port"><i class="fa fa-random"></i> Port</label>
+        <input type="text" id="node-input-port" placeholder="465">
+    </div>
+    <div class="form-row">
+        <label for="node-input-userid"><i class="fa fa-user"></i> Userid</label>
+        <input type="text" id="node-input-userid">
+    </div>
+    <div class="form-row">
+        <label for="node-input-password"><i class="fa fa-lock"></i> Password</label>
+        <input type="password" id="node-input-password">
+    </div>
+    <br/>
+    <div class="form-row">
+        <label for="node-input-dname"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-dname" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="e-mail">
+    <p>Sends the <b>msg.payload</b> as an email, with a subject of <b>msg.topic</b>.</p>
+    <!-- <p>It sends the message to the configured recipient <i>only</i>.</p> -->
+    <p>You may dynamically overide the default recipient by setting a <b>msg.to</b> property.</p>
+    <!-- <p><b>msg.topic</b> is used to set the subject of the email, and <b>msg.payload</b> is the body text.</p> -->
+</script>
+
+<script type="text/javascript">
+(function() {
+    RED.nodes.registerType('e-mail',{
+        category: 'social-output',
+        color:"#c7e9c0",
+        defaults: {
+            server: {value:"smtp.gmail.com",required:true},
+            port: {value:"465",required:true},
+            name: {value:"",required:true},
+            dname: {value:""},
+            userid: {value:""},
+            password: {value: ""}
+        },
+        inputs:1,
+        outputs:0,
+        icon: "envelope.png",
+        align: "right",
+        label: function() {
+            return this.dname||this.name||"email";
+        },
+        labelStyle: function() {
+            return (this.dname||!this.topic)?"node_label_italic":"";
+        },
+        oneditprepare: function() {
+
+
+
+        }
+    });
+})();
+</script>
+
+
+<script type="text/x-red" data-template-name="e-mail in">
+    <div class="form-row node-input-repeat">
+        <label for="node-input-repeat"><i class="fa fa-repeat"></i> Check Repeat (S)</label>
+        <input type="text" id="node-input-repeat" placeholder="300">
+    </div>
+    <div class="form-row">
+        <label for="node-input-server"><i class="fa fa-globe"></i> Server</label>
+        <input type="text" id="node-input-server" placeholder="imap.gmail.com">
+    </div>
+    <div class="form-row">
+        <label for="node-input-port"><i class="fa fa-random"></i> Port</label>
+        <input type="text" id="node-input-port" placeholder="993">
+    </div>
+    <div class="form-row">
+        <label for="node-input-userid"><i class="fa fa-user"></i> Userid</label>
+        <input type="text" id="node-input-userid">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-password"><i class="fa fa-lock"></i> Password</label>
+        <input type="password" id="node-input-password">
+    </div>
+    <br/>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div id="node-input-tip" class="form-tips">Tip: <b>ONLY</b> retrieves the single most recent email.</div>
+</script>
+
+<script type="text/x-red" data-help-name="e-mail in">
+    <p>Repeatedly gets a <b>single email</b> from an IMAP server and forwards on as a msg if not already seen.</p>
+    <p>The subject is loaded into <b>msg.topic</b> and <b>msg.payload</b> is the plain text body.
+       If there is text/html then that is returned in <b>msg.html</b>. <b>msg.from</b> and <b>msg.date</b> are also set if you need them.</p>
+    <p>Uses the imap module.</p>
+    <p><b>Note:</b> this node <i>only</i> gets the most recent single email from the inbox, so set the repeat (polling) time appropriately.</p>
+</script>
+
+<script type="text/javascript">
+(function() {
+    RED.nodes.registerType('e-mail in',{
+        category: 'social-input',
+        color:"#c7e9c0",
+        defaults: {
+            repeat: {value:"300",required:true},
+            server: {value:"imap.gmail.com",required:true},
+            port: {value:"993",required:true},
+            name: {value:""},
+            userid: {value:""},
+            password: {value: ""}
+        },
+        inputs:0,
+        outputs:1,
+        icon: "envelope.png",
+        label: function() {
+            return this.name||"email";
+        },
+        labelStyle: function() {
+            return (this.name||!this.topic)?"node_label_italic":"";
+        },
+        oneditprepare: function() {
+            
+
+
+
+
+
+        }
+    });
+})();
+</script>

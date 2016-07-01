@@ -1,0 +1,70 @@
+<!--
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/x-red" data-template-name="print">
+    <div class="form-row">
+        <label for="node-input-complete"><i class="fa fa-list"></i> Output</label>
+        <select type="text" id="node-input-complete" style="display: inline-block; width: 250px; vertical-align: top;">
+            <option value="false">payload only</option>
+            <option value="true">complete msg object</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-field"><i class="fa fa-tag"></i> Field</label>
+        <input type="text" id="node-input-field" placeholder="field">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="print">
+    <p>The print node can be connected to the output of any node. It will display <b>msg.payload</b> field of any messages it receives.
+    <p>The button to the right of the node will toggle it's output on and off so you can de-clutter the console window.</p>
+    <p>If the payload is an object it will be stringified first for display and indicate that by saying "(Object) ".</p>
+    <p>If the payload is a buffer it will be stringified first for display and indicate that by saying "(Buffer) ".</p>
+    <p>Optionally can show the complete msg object - but the screen can get messy.</p>
+    <p>If a <b>field</b> is specified, it will display msg[<b>field</b>].</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('print',{
+        category: 'output',
+        defaults: {
+            name: {value:""},
+            active: {value:true},
+            field: {value:""},
+            complete: {value:"false"}
+        },
+        label: function() {
+            return this.name||"print "+((this.complete=="true")?"msg":("msg."+((this.field && this.field.length>0)?this.field:"payload")));
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        },
+        color:"#87a980",
+        inputs:1,
+        outputs:0,
+        icon: "debug.png",
+        align: "right",
+        button: {
+            toggle: "active",
+            onclick: function() {
+                RED.nodes.dirty (true);
+            }
+        }
+    });
+</script>

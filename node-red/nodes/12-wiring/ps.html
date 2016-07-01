@@ -1,0 +1,75 @@
+<!--
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!-- First, the content of the edit dialog is defined.                       -->
+<script type="text/x-red" data-template-name="playstation">
+
+    <div class="form-row" id="node-config">
+        <label for="node-input-config"><i class="fa fa-tasks"></i> Controller </label>
+        <select id="node-input-config" style="width:270px !important">
+          <option value="dualShock3">Playstation 3</option>
+          <option value="dualShock4-generic-driver">Playstation 4</option>
+        </select>
+    </div>
+    <div class="form-row" id="node-accelerometerSmooting">
+        <input style="width: 30px;" type="checkbox" id="node-input-accelerometerSmooting"><label style="width: 250px;" for="node-input-accelerometerSmooting">Smooth  acelerometers data</label>
+    </div>
+    <div class="form-row" id="node-analogStickSmoothing">
+        <input style="width: 30px;" type="checkbox" id="node-input-analogStickSmoothing"><label style="width: 250px;" for="node-input-analogStickSmoothing">Smooth  joysticks data</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+
+</script>
+
+<!-- Next, some simple help text is provided for the node.                   -->
+<script type="text/x-red" data-help-name="playstation">
+    <p>Get input from a playstation controller.</p>
+    <p>The values are:
+    <ul>
+      <li><b>msg.payload</b> - button</li>
+      <li><b>msg.topic</b> - action</li>
+    </ul>
+    </p>
+</script>
+
+<!-- Finally, the node type is registered along with all of its properties   -->
+<script type="text/javascript">
+    RED.nodes.registerType('playstation',{
+        category: 'input',      // the palette category
+        color:"#3d99d8",
+        defaults: {             // defines the editable properties of the node
+            name: {value:""},   //  along with default values.
+            config: {value:"dualShock3"},
+            accelerometerSmooting: {value: true},
+            analogStickSmoothing: {value: true}
+        },
+        inputs:0,                // set the number of inputs - only 0 or 1
+        outputs:1,               // set the number of outputs - 0 to n
+        icon: "ps-controller.png",    // set the icon (held in public/icons)
+        label: function() {      // sets the default label contents
+            return this.name?this.name:(this.config == "dualShock3"?"PS3 Controller":"PS4 Controller");
+        },
+        labelStyle: function() { // sets the class to apply to the label
+            return this.name?"node_label_italic":"";
+        },
+        oneditprepare: function() {
+
+        },
+    });
+</script>
+

@@ -1,0 +1,133 @@
+<!--
+  Copyright 2013, 2014 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/x-red" data-template-name="value">
+    <div class="form-row">
+        <label for="node-input-value"><i class="fa fa-tag"></i> Variable Name</label>
+        <input type="text" id="node-input-value" placeholder="Variable name">
+    </div>
+    <div class="form-row" id="node-publish">
+        <input style="width: 30px;" type="checkbox" id="node-input-publish"><label style="width: 250px;" for="node-input-publish">Publish to the websocket</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-initial"><i class="fa fa-tag"></i> Initial</label>
+        <input type="text" id="node-input-initial" placeholder="Initialize with value">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="value">
+	<p>Loads the <b>payload</b> into a variable</p>.
+	      
+</script>
+
+<script type="text/x-red" data-template-name="message callback">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="message callback">
+    <p>Store a message, attaches an id and sends the message. When a message with an attached id is recived, the stored message is extended with the recived message.</p>.
+          
+</script>
+
+<script type="text/x-red" data-template-name="set x value">
+    <div class="form-row">
+        <label for="node-input-value"><i class="fa fa-tag"></i> Variable Name</label>
+        <input type="text" id="node-input-value" placeholder="Variable name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="set x value">
+  <p>Loads the <b>value</b> into msg.x</p>.
+        
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('value',{
+        color:"#e6e0f8",
+        category: 'function',
+        defaults: {
+            name: {value:""},
+            value: {value:""},
+            publish: {value: true},
+            initial: {value: ""}
+        },
+        inputs:1,
+        outputs:0,
+        icon: "arrow-in.png",
+        label: function() {
+            return this.value || this.name;
+        },
+        oneditprepare: function() {
+            
+        },
+        oneditsave: function() {
+            
+        }
+    });
+
+    RED.nodes.registerType('message callback',{
+        color:"#e6e0f8",
+        category: 'function',
+        defaults: {
+            name: {value:""},
+        },
+        inputs:1,
+        outputs:2,
+        icon: "storage.png",
+        label: function() {
+            return this.value || this.name;
+        },
+        oneditprepare: function() {
+            
+        },
+        oneditsave: function() {
+            
+        }
+    });
+
+    RED.nodes.registerType('set x value',{
+        color:"#e6e0f8",
+        category: 'signal processing',
+        defaults: {
+            name: {value:""},
+            value: {value:""},
+        },
+        inputs:1,
+        outputs:1,
+        icon: "arrow-in.png",
+        label: function() {
+            return 'Set x for '+this.value || this.name;
+        },
+        oneditprepare: function() {
+            
+        },
+        oneditsave: function() {
+            
+        }
+    });
+
+</script>
