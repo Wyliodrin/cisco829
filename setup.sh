@@ -64,7 +64,8 @@ rm -rf avahi
 
 
 #####start node-red
-cp -rp node-red /wyliodrin/
+mkdir /wyliodrin/node-red
+cp -a node-red/. /wyliodrin/node-red
 rm -rf node-red
 #####end node-red
 
