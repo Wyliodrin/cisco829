@@ -1,12 +1,15 @@
 #!/bin/sh
 
+echo "Making paths"
 mkdir /opt
 mkdir /opt/wyliodrin
 mkdir /usr/wyliodrin
 
 ln -s /opt/wyliodrin /wyliodrin
+echo "Done"
 
 
+echo "Installing NodeJS"
 #######start node
 cd node
 
@@ -20,7 +23,10 @@ chmod +x /usr/bin/node
 cd ..
 rm -rf node
 #####end node
+echo "Done"
 
+
+echo "Installing Redis"
 #####start redis
 cd redis
 
@@ -39,9 +45,11 @@ ln -s ../init.d/redis /etc/rc5.d/S90redis
 
 cd ..
 rm -rf redis
-
 #end redis
+echo "Done"
 
+
+echo "Installing Avahi"
 ####start avahi
 cd avahi
 
@@ -64,17 +72,20 @@ ln -s ../init.d/avahi /etc/rc5.d/S98avahi
 
 cd ..
 rm -rf avahi
-
 ####end avahi
+echo "Done"
 
 
+echo "Installing Node-Red"
 #####start node-red
 mkdir /wyliodrin/node-red
 cp -a node-red/. /wyliodrin/node-red
 rm -rf node-red
 #####end node-red
+echo "Done"
 
 
+echo "Installing Wyliodrin Server"
 #####start wyliodrin-app-server
 cp -rp wyliodrin-app-server /usr/wyliodrin/wyliodrin-app-server
 rm -rf wyliodrin-app-server
@@ -98,9 +109,11 @@ ln -s ../init.d/wyliodrin-app-server /etc/rc3.d/S97wyliodrin-app-server
 ln -s ../init.d/wyliodrin-app-server /etc/rc4.d/S97wyliodrin-app-server
 ln -s ../init.d/wyliodrin-app-server /etc/rc5.d/S97wyliodrin-app-server
 #####end wyliodrin-app-server
+echo "Done"
 
-
+echo "Starting-up"
 /etc/init.d/redis start
 /etc/init.d/wyliodrin-app-server start &
+echo "ALL DONE!"
 
 
