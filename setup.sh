@@ -1,6 +1,11 @@
 #!/bin/sh
 
 mkdir /opt
+mkdir /opt/wyliodrin
+mkdir /usr/wyliodrin
+
+ln -s /opt/wyliodrin /wyliodrin
+
 
 #######start node
 cd node
@@ -71,12 +76,9 @@ rm -rf node-red
 
 
 #####start wyliodrin-app-server
-mkdir /opt/wyliodrin
-mkdir /usr/wyliodrin
-
 cp -rp wyliodrin-app-server /usr/wyliodrin/wyliodrin-app-server
 rm -rf wyliodrin-app-server
-ln -s /opt/wyliodrin /wyliodrin
+
 
 mkdir /wyliodrin/projects
 mkdir /wyliodrin/projects/build
