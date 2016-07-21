@@ -66,12 +66,19 @@ adduser --disabled-password --gecos "" cisco
 
 cp -a pgsqllib/usr/lib/* /usr/lib
 cp -a pgsqllib/usr/include/* /usr/include
+rm /usr/lib/libkeyutils.so.1
+rm /usr/lib/libkeyutils.so
+ln -s libkeyutils.so.1.5 libkeyutils.so
+ln -s libkeyutils.so.1.5 libkeyutils.so.1
 rm -rf pgsqllib
 
 cp -a pgsql /software/
 chown -R cisco /software/pgsql
 rm -rf pgsql
 chmod +x /software/pgsql/bin/postgres
+chmod u+rwx /software/pgsql/data
+chmod g-rwx /software/pgsql/data
+chmod o-rwx /software/pgsql/data
 
 cp loraserver /software/
 chmod +x /software/loraserver
