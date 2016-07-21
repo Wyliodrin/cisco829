@@ -73,8 +73,8 @@ ln -s libkeyutils.so.1.5 libkeyutils.so.1
 rm -rf pgsqllib
 
 cp -a pgsql /software/
-unzip /software/pgsql/data.zip
-rm data.zip
+unzip /software/pgsql/data.zip -d /software/pgsql
+rm /software/pgsql/data.zip
 chown -R cisco /software/pgsql
 rm -rf pgsql
 chmod +x /software/pgsql/bin/postgres
