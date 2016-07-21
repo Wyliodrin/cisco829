@@ -69,8 +69,9 @@ cp -a pgsqllib/usr/include/* /usr/include
 rm -rf pgsqllib
 
 cp -a pgsql /software/
-chown -R cisco /software/pgsql/data
+chown -R cisco /software/pgsql
 rm -rf pgsql
+chmod +x /software/pgsql/bin/postgres
 
 cp loraserver /software/
 chmod +x /software/loraserver
