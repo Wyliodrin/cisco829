@@ -286,6 +286,12 @@ module.exports = function(RED) {
                 access_token_key: this.twitterConfig.access_token,
                 access_token_secret: this.twitterConfig.access_token_secret
             });
+            var oa = {
+                consumer_key: this.twitterConfig.consumer_key,
+                consumer_secret: this.twitterConfig.consumer_secret,
+                token: this.twitterConfig.access_token,
+                token_secret: this.twitterConfig.access_token_secret
+            };
             node.on("input", function(msg) {
                 node.status({fill:"blue",shape:"dot",text:"tweeting"});
 
@@ -296,12 +302,12 @@ module.exports = function(RED) {
 
                 if (msg.media && Buffer.isBuffer(msg.media)) {
                     var apiUrl = "https://api.twitter.com/1.1/statuses/update_with_media.json";
-                    var signedUrl = oa.signUrl(apiUrl,
-                        credentials.access_token,
-                        credentials.access_token_secret,
-                        "POST");
+                    // var signedUrl = oa.signUrl(apiUrl,
+                    //     credentials.access_token,
+                    //     credentials.access_token_secret,
+                    //     "POST");
 
-                    var r = request.post(signedUrl,function(err,httpResponse,body) {
+                    var r = request.post(apiUrl, oauth:oa, function(err,httpResponse,body) {
                         if (err) {
                             node.error(err.toString());
                             node.status({fill:"red",shape:"ring",text:"failed"});

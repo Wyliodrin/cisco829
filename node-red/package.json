@@ -58,7 +58,7 @@
     "jinja": "0.13.x",
     "mkdirp": "0.5.0",
     "morgan": "1.6.0",
-    "mqtt": "0.3.x",
+    "mqtt": "1.11.2",
     "mustache": "2.1.1",
     "mysql": "^2.7.0",
     "ndarray": "1.0.18",

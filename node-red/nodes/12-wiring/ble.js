@@ -547,8 +547,10 @@ module.exports = function(RED) {
         this.peripherals = dict ();
         this.access = dict ();
 
-        this.ids = n.ids.split (', ');
-        this.addresses = n.addresses.split (', ');
+        if (n.ids != undefined) n.ids="";
+        if (n.addresses != undefined) n.addresses = "";
+        this.ids = (n.ids.length>0?n.ids.split (', '):[]);
+        this.addresses = (n.addresses.length>0?n.addresses.split (', '):[]);
         this.service = n.service;
         this.characteristic = n.characteristic;
         this.datatype = n.datatype;
@@ -708,17 +710,10 @@ module.exports = function(RED) {
 
         this.peripherals = dict ();
 
-        this.ids = [];
-        if (n.ids != undefined)
-        {
-            this.ids = n.ids.split (', ');
-        }
-        this.addresses = [];
-        if (n.addresses != undefined)
-        {
-
-        }
-        this.addresses = n.addresses.split (', ');
+        if (n.ids != undefined) n.ids="";
+        if (n.addresses != undefined) n.addresses = "";
+        this.ids = (n.ids.length>0?n.ids.split (', '):[]);
+        this.addresses = (n.addresses.length>0?n.addresses.split (', '):[]);
         this.service = n.service;
         this.characteristic = n.characteristic;
         this.datatype = n.datatype;
@@ -819,17 +814,10 @@ module.exports = function(RED) {
         this.peripherals = dict ();
         this.access = dict ();
 
-        this.ids = [];
-        if (n.ids != undefined)
-        {
-            this.ids = n.ids.split (', ');
-        }
-        this.addresses = [];
-        if (n.addresses != undefined)
-        {
-
-        }
-        this.addresses = n.addresses.split (', ');
+        if (n.ids != undefined) n.ids="";
+        if (n.addresses != undefined) n.addresses = "";
+        this.ids = (n.ids.length>0?n.ids.split (', '):[]);
+        this.addresses = (n.addresses.length>0?n.addresses.split (', '):[]);
         this.service = n.service;
         this.characteristic = n.characteristic;
         this.datatype = n.datatype;

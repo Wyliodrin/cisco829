@@ -17,6 +17,7 @@
 module.exports = function(RED) {
     "use strict";
     var mustache = null;
+    var _ = require ('underscore');
 
     if (RED.device)
     {
@@ -40,7 +41,7 @@ module.exports = function(RED) {
             }
             else {
                  if (i === b.length) { // we've finished so assign the value
-                     obj[b[i-1]] = mustache.render(node.template,m);
+                     obj[b[i-1]] = mustache.render(node.template,_.extend (m, RED.settings.functionGlobalContext));
                      node.send(m);
                  }
                  else {
