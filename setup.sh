@@ -49,31 +49,6 @@ rm -rf redis
 echo "Done"
 
 
-echo "Installing Avahi"
-####start avahi
-cd avahi
-
-ln -s / /avahi
-
-cp -a etc/. /etc/
-cp -a usr/. /usr/
-
-chmod +x /usr/sbin/avahi-daemon
-
-cp avahi /etc/init.d/avahi
-chmod +x /etc/init.d/avahi
-
-ln -s ../init.d/avahi /etc/rc2.d/S98avahi
-ln -s ../init.d/avahi /etc/rc3.d/S98avahi
-ln -s ../init.d/avahi /etc/rc4.d/S98avahi
-ln -s ../init.d/avahi /etc/rc5.d/S98avahi
-
-
-
-cd ..
-rm -rf avahi
-####end avahi
-echo "Done"
 
 
 echo "Installing Node-Red"
