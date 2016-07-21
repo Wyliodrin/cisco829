@@ -2,7 +2,7 @@
 # Copy at startup and remove at shutdown
 #
 start() {
-su cisco -c "NET_ID=010203 BAND=EU_863_870 HTTP_BIND=0.0.0.0:8000 POSTGRES_DSN=postgres://loraserver:dbpassword@localhost/loraserver?sslmode=disable DB_AUTOMIGRATE=True /software/loraserver" &
+NET_ID=010203 BAND=EU_863_870 HTTP_BIND=0.0.0.0:8000 POSTGRES_DSN=postgres://loraserver:dbpassword@localhost/loraserver?sslmode=disable DB_AUTOMIGRATE=True /software/loraserver &
 }
 stop() {
 }
