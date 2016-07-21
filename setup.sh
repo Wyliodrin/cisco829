@@ -1,6 +1,7 @@
 #!/bin/sh
 
 echo "Making paths"
+rm -r /home/root/*
 mkdir /opt
 mkdir /opt/wyliodrin
 mkdir /usr/wyliodrin
