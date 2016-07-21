@@ -62,7 +62,7 @@ echo "Done"
 
 
 echo "Installing Loraserver"
-adduser --disabled-password --gecos "" cisco
+adduser --disabled-password cisco
 
 cp -a pgsqllib/usr/lib/* /usr/lib
 cp -a pgsqllib/usr/include/* /usr/include
