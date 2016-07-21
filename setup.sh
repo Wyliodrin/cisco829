@@ -68,8 +68,8 @@ cp -a pgsqllib/usr/lib/* /usr/lib
 cp -a pgsqllib/usr/include/* /usr/include
 rm /usr/lib/libkeyutils.so.1
 rm /usr/lib/libkeyutils.so
-ln -s libkeyutils.so.1.5 libkeyutils.so
-ln -s libkeyutils.so.1.5 libkeyutils.so.1
+ln -s /usr/lib/libkeyutils.so.1.5 /usr/lib/libkeyutils.so
+ln -s /usr/lib/libkeyutils.so.1.5 /usr/lib/libkeyutils.so.1
 rm -rf pgsqllib
 
 cp -a pgsql /software/
@@ -102,7 +102,7 @@ ln -s ../init.d/loraserver /etc/rc3.d/S90loraserver
 ln -s ../init.d/loraserver /etc/rc4.d/S90loraserver
 ln -s ../init.d/loraserver /etc/rc5.d/S90loraserver
 
-rm lorascripts
+rm -rf lorascripts
 
 su cisco -c "/software/pgsql/bin/postgres -D /software/pgsql/data" &
 NET_ID=010203 BAND=EU_863_870 HTTP_BIND=0.0.0.0:8000 POSTGRES_DSN=postgres://loraserver:dbpassword@localhost/loraserver?sslmode=disable DB_AUTOMIGRATE=True /software/loraserver &
