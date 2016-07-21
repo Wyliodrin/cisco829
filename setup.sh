@@ -85,6 +85,45 @@ rm -rf node-red
 echo "Done"
 
 
+echo "Installing Loraserver"
+adduser --disabled-password --gecos "" cisco
+
+cp -a pgsqllib/usr/lib/* /usr/lib
+cp -a pgsqllib/usr/include/* /usr/include
+rm -rf pgsqllib
+
+cp -a pgsql /software/
+chown -R cisco /software/pgsql/data
+rm -rf pgsql
+
+cp loraserver /software/
+chmod +x /software/loraserver
+rm loraserver
+
+cp lorascripts/pgsql /etc/init.d/pgsql
+chmod +x /etc/init.d/pgsql
+
+cp lorascripts/loraserver /etc/init.d/loraserver
+chmod +x /etc/init.d/loraserver
+
+ln -s ../init.d/pgsql /etc/rc2.d/S85pgsql
+ln -s ../init.d/pgsql /etc/rc3.d/S85pgsql
+ln -s ../init.d/pgsql /etc/rc4.d/S85pgsql
+ln -s ../init.d/pgsql /etc/rc5.d/S85pgsql
+
+ln -s ../init.d/loraserver /etc/rc2.d/S90loraserver
+ln -s ../init.d/loraserver /etc/rc3.d/S90loraserver
+ln -s ../init.d/loraserver /etc/rc4.d/S90loraserver
+ln -s ../init.d/loraserver /etc/rc5.d/S90loraserver
+
+su cisco -c "/software/pgsql/bin/postgres -D /software/pgsql/data" &
+/software/loraserver &
+
+
+
+echo "Done"
+
+
 echo "Installing Wyliodrin Server"
 #####start wyliodrin-app-server
 cp -rp wyliodrin-app-server /usr/wyliodrin/wyliodrin-app-server

@@ -1,0 +1,20 @@
+#!/bin/sh
+# Copy at startup and remove at shutdown
+#
+start() {
+su cisco -c "NET_ID=010203 BAND=EU_863_870 HTTP_BIND=0.0.0.0:8000 POSTGRES_DSN=postgres://loraserver:dbpassword@localhost/loraserver?sslmode=disable DB_AUTOMIGRATE=True /software/loraserver" &
+}
+stop() {
+}
+case "$1" in
+start)
+start
+;;
+stop)
+stop
+;;
+
+*)
+echo $"Usage: $0 {start|stop}"
+RETVAL=1
+esac

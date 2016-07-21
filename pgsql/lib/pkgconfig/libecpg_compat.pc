@@ -1,0 +1,9 @@
+Name: libecpg_compat
+Description: PostgreSQL libecpg_compat library
+Url: http://www.postgresql.org/
+Version: 9.4.8
+Requires: 
+Requires.private: libecpg libpgtypes
+Cflags: -I/mnt/hgfs/pginstaller.auto/server/staging/linux/include
+Libs: -L/mnt/hgfs/pginstaller.auto/server/staging/linux/lib -lecpg_compat
+Libs.private: -L/opt/local/Current/lib -lpq -lm -lpthread
